@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Weather App</string>
+    <string name="text_input_hint_location">Location</string>
+    <string name="input_location">Type a location</string>
+    <string name="widget_maxtemp">Maximum Temperature</string>
+    <string name="widget_mintemp">Minimum Temperature</string>
+    <string name="widget_windspeed">Wind Speed</string>
+    <string name="widget_humidity">Humidity</string>
+    <string name="button_search">Search</string>
+</resources>
