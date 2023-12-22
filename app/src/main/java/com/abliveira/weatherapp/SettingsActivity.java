@@ -1,5 +1,9 @@
 package com.abliveira.weatherapp;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,8 +18,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private String unitSystem;
     private String language;
-    private boolean notificationsEnabled;
-    private int notificationsInterval;
+    private String notificationInterval;
+//    private boolean notificationEnabled;
+//    private int notificationIntervalHours;
 
     private RadioGroup unitSystemRadioGroup;
     private RadioGroup languageRadioGroup;
@@ -28,10 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        unitSystem = "Metric";  // TODO Replace this with the stored value
-        language = "Spanish";   // TODO Replace this with the stored value
-//        intervalValue = "Once a day"; // TODO Replace this with the stored value
-
+        loadSettings();
         loadUI();
 
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -54,13 +56,33 @@ public class SettingsActivity extends AppCompatActivity {
                 int selectedRadioButtonId3 = notificationIntervalRadioGroup.getCheckedRadioButtonId();
                 RadioButton radioButton3 = findViewById(selectedRadioButtonId3);
                 String radioGroup3Value = radioButton3 != null ? radioButton3.getText().toString() : "No option selected";
+                notificationInterval = radioGroup3Value;
 
-                // TODO Implement configuration saving here
+                ContentResolver resolver = getContentResolver();
 
-                // Display a toast with the selected options
-                String message = "Unit System: " + radioGroup1Value
-                        + "\nLanguage: " + radioGroup2Value
-                        + "\nNotification Interval: " + radioGroup3Value;
+                String unitSystemKey = "unitsystem";
+                String languageKey = "language";
+                String notificationIntervalKey = "notificationInterval";
+
+                storeSetting(resolver, unitSystemKey, unitSystem);
+                storeSetting(resolver, languageKey, language);
+                storeSetting(resolver, notificationIntervalKey, notificationInterval);
+
+                // Read and display stored settings
+
+                unitSystem= readSetting(resolver, unitSystemKey);
+                Log.d("WA_DEBUG", "Unit System: " + unitSystem);
+
+                language = readSetting(resolver, languageKey);
+                Log.d("WA_DEBUG", "Language: " + language);
+
+                notificationInterval= readSetting(resolver, notificationIntervalKey);
+                Log.d("WA_DEBUG", "Notification Interval: " + notificationInterval);
+
+                // Display a toast with the stored options
+                String message = "Unit System: " + unitSystem
+                        + "\nLanguage: " + language
+                        + "\nNotification Interval: " + notificationInterval;
 
                 Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
 
@@ -90,7 +112,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         String unitSystemValue = unitSystem;
         String languageValue = language;
-        String intervalValue = "Once a day"; // TODO Replace this with the a dynamic value
+        String intervalValue = notificationInterval;
 
         // Select RadioButton based on the string value
         selectRadioButtonByText(unitSystemRadioGroup, unitSystemValue);
@@ -110,5 +132,56 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    protected void loadSettings () {
+
+        ContentResolver resolver = getContentResolver();
+
+        String unitSystemKey = "unitsystem";
+        String languageKey = "language";
+        String notificationIntervalKey = "notificationInterval";
+
+        // Read and display settings
+        unitSystem = readSetting(resolver, unitSystemKey);
+        Log.d("WA_DEBUG", "Unit System: " + unitSystem);
+
+        language = readSetting(resolver, languageKey);
+        Log.d("WA_DEBUG", "Language: " + language);
+
+        notificationInterval = readSetting(resolver, notificationIntervalKey);
+        Log.d("WA_DEBUG", "Notification Interval: " + notificationInterval);
+    }
+
+    private String readSetting(ContentResolver resolver, String key) {
+        Uri uri = Uri.withAppendedPath(SettingsProvider.CONTENT_URI, key);
+        String[] projection = {SettingsDbHelper.COLUMN_VALUE};
+
+        Cursor cursor = resolver.query(uri, projection, null, null, null);
+
+        String value = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            value = cursor.getString(cursor.getColumnIndex(SettingsDbHelper.COLUMN_VALUE));
+            cursor.close();
+        }
+
+        return value;
+    }
+
+    private void storeSetting(ContentResolver resolver, String key, String value) {
+
+        String[] projection = {
+                SettingsDbHelper.COLUMN_ID,
+                SettingsDbHelper.COLUMN_KEY,
+                SettingsDbHelper.COLUMN_VALUE
+        };
+
+        Uri uri = Uri.withAppendedPath(SettingsProvider.CONTENT_URI, key);
+        Cursor cursor = resolver.query(uri, projection, null, null, null);
+        cursor.moveToFirst();
+
+        ContentValues updateValues = new ContentValues();
+        updateValues.put(SettingsDbHelper.COLUMN_VALUE, value);
+        resolver.update(uri, updateValues, null, null);
     }
 }
