@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/pageTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="@string/settings"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/unitSystemTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pageTitleTextView"
+        android:layout_marginBottom="4dp"
+        android:text="Unit System"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/unitSystemRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/unitSystemTextView"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButton1a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_metric" />
+
+        <RadioButton
+            android:id="@+id/radioButton1b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_imperial" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/languageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/unitSystemRadioGroup"
+        android:layout_marginBottom="4dp"
+        android:text="Language"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/languageRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/languageTextView"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButton2a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_english" />
+
+        <RadioButton
+            android:id="@+id/radioButton2b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_spanish" />
+
+        <RadioButton
+            android:id="@+id/radioButton2c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_portuguese" />
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/notificationIntervalTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/languageRadioGroup"
+        android:layout_marginBottom="4dp"
+        android:text="Notification Interval"
+        android:textSize="18sp" />
+
+    <RadioGroup
+        android:id="@+id/notificationIntervalRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notificationIntervalTextView"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical">
+
+        <RadioButton
+            android:id="@+id/radioButton3a"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Disabled"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3b"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_one_hour"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3c"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_three_hours"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3d"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_twelve_hours"/>
+
+        <RadioButton
+            android:id="@+id/radioButton3e"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_one_day"/>
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/notificationIntervalRadioGroup"
+        android:layout_marginTop="16dp"
+        android:text="Save"/>
+
+    <!-- Cancel Button -->
+    <Button
+        android:id="@+id/cancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/saveButton"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@id/saveButton"
+        android:text="Cancel" />
+</RelativeLayout>
