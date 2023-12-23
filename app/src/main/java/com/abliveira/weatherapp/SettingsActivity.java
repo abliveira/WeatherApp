@@ -3,6 +3,7 @@ package com.abliveira.weatherapp;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.abliveira.weatherapp.service.NotificationService;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -90,7 +93,11 @@ public class SettingsActivity extends AppCompatActivity {
 
                 Toast.makeText(SettingsActivity.this, message, Toast.LENGTH_SHORT).show();
 
-                finish(); // Close the activity and return to the main
+                // Update the app configurations
+                sendUpdateIntervalBroadcast(notificationInterval);
+
+                // Close the activity and return to the main
+                finish();
             }
         });
 
@@ -210,5 +217,32 @@ public class SettingsActivity extends AppCompatActivity {
         ContentValues updateValues = new ContentValues();
         updateValues.put(SettingsDbHelper.COLUMN_VALUE, value);
         resolver.update(uri, updateValues, null, null);
+    }
+
+    private void sendUpdateIntervalBroadcast(String notificationInterval) {
+
+        int newInterval = 1;
+        boolean notificationEnabled = true;
+
+        // Comparing the variable with each string
+        if (notificationInterval.equals(getString(R.string.label_disabled))) {
+            notificationEnabled = false;
+        } else if (notificationInterval.equals(getString(R.string.label_one_hour))) {
+            newInterval = 10;//1;
+        } else if (notificationInterval.equals(getString(R.string.label_three_hours))) {
+            newInterval = 30;//3;
+        } else if (notificationInterval.equals(getString(R.string.label_twelve_hours))) {
+            newInterval = 120;//12;
+        } else if (notificationInterval.equals(getString(R.string.label_one_day))) {
+            newInterval = 24;
+        } else {
+            Toast.makeText(this, "Invalid interval", Toast.LENGTH_SHORT).show();
+        }
+        Log.d("WA_DEBUG", "sendUpdateIntervalBroadcast: " + newInterval);
+        Intent updateIntent = new Intent(NotificationService.ACTION_UPDATE_INTERVAL);
+        updateIntent.putExtra(NotificationService.EXTRA_NOTIFICATION_ENABLED, notificationEnabled);
+        updateIntent.putExtra(NotificationService.EXTRA_INTERVAL_SECONDS, newInterval);
+        sendBroadcast(updateIntent);
+        Toast.makeText(this, "Interval updated", Toast.LENGTH_SHORT).show();
     }
 }

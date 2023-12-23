@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.abliveira.weatherapp.service.NotificationService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         widgetsContainer = findViewById(R.id.widgetsContainer);
 
         initializeSettings();
+
+        // Start the NotificationService
+        startService(new Intent(this, NotificationService.class));
     }
 
     private void initializeSettings(){

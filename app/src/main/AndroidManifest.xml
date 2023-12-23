@@ -25,6 +25,7 @@
             android:name=".SettingsProvider"
             android:authorities="com.abliveira.weatherapp.settingsprovider"
             android:exported="false" />
+        <service android:name=".service.NotificationService" />
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
