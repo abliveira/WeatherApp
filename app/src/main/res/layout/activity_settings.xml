@@ -143,4 +143,13 @@
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@id/saveButton"
         android:text="Cancel" />
+
+    <Button
+        android:id="@+id/helpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/cancelButton"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@id/cancelButton"
+        android:text="Help" />
 </RelativeLayout>

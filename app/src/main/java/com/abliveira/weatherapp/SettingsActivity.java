@@ -2,6 +2,7 @@ package com.abliveira.weatherapp;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -27,6 +29,8 @@ public class SettingsActivity extends AppCompatActivity {
     private RadioGroup notificationIntervalRadioGroup;
     private Button saveButton;
     private Button cancelButton;
+    private Button helpButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +100,28 @@ public class SettingsActivity extends AppCompatActivity {
                 finish(); // Close the activity and return to the main
             }
         });
+
+        helpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Create an AlertDialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setTitle("Help");
+                builder.setMessage("developed by Arthur Oliveira (abliveira)\n" +
+                        "https://github.com/abliveira");
+
+                // Set positive button
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                // Show the AlertDialog
+                builder.show();
+            }
+        });
     }
 
     private void loadUI() {
@@ -105,6 +131,7 @@ public class SettingsActivity extends AppCompatActivity {
         notificationIntervalRadioGroup = findViewById(R.id.notificationIntervalRadioGroup);
         saveButton = findViewById(R.id.saveButton);
         cancelButton = findViewById(R.id.cancelButton);
+        helpButton = findViewById(R.id.helpButton);
 
         RadioGroup unitSystemRadioGroup = findViewById(R.id.unitSystemRadioGroup);
         RadioGroup languageRadioGroup = findViewById(R.id.languageRadioGroup);
