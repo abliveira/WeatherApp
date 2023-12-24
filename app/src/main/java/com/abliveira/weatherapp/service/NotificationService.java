@@ -5,19 +5,25 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
 import com.abliveira.weatherapp.MainActivity;
 import com.abliveira.weatherapp.R;
+import com.abliveira.weatherapp.SettingsDbHelper;
+import com.abliveira.weatherapp.SettingsProvider;
 
 import java.util.concurrent.TimeUnit;
 
@@ -30,21 +36,29 @@ public class NotificationService extends Service {
     private BroadcastReceiver intervalReceiver;
 
     public static final String ACTION_UPDATE_INTERVAL = "com.abliveira.weatherapp.action.UPDATE_INTERVAL";
-    public static final String EXTRA_INTERVAL_SECONDS = "com.abliveira.weatherapp.extra.INTERVAL_SECONDS";
-    public static final String EXTRA_NOTIFICATION_ENABLED = "com.abliveira.weatherapp.extra.NOTIFICATION_ENABLED";
+    public static final String EXTRA_INTERVAL_STRING = "com.abliveira.weatherapp.extra.INTERVAL_STRING";
 
-    int intervalSeconds = 10; // TODO Load intervalSeconds from Storage
+    int intervalSeconds = 10;
+    boolean notificationEnabled = true;
 
     @Override
     public void onCreate() {
         super.onCreate();
+
+        loadSettings();
 
         // Create a notification channel (required for Android 8.0 and above)
         createNotificationChannel();
 
         // Schedule notification task every 10 seconds by default
         handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(notificationTask, TimeUnit.SECONDS.toMillis(intervalSeconds));
+        if (notificationEnabled == true) {
+            handler.postDelayed(notificationTask, TimeUnit.SECONDS.toMillis(intervalSeconds));
+            Log.d("WA_DEBUG", "notificationEnabled true");
+        } else {
+            handler.removeCallbacks(notificationTask);
+            Log.d("WA_DEBUG", "notificationEnabled false  ");
+        }
 
         // Register the dynamic receiver
         intervalReceiver = new BroadcastReceiver() {
@@ -52,12 +66,12 @@ public class NotificationService extends Service {
             public void onReceive(Context context, Intent intent) {
                 Log.d("WA_DEBUG", "onReceive: ");
                 if (intent.getAction() != null && intent.getAction().equals(ACTION_UPDATE_INTERVAL)) {
-                    boolean notificationEnabled = intent.getBooleanExtra(EXTRA_NOTIFICATION_ENABLED, true);
-                    int newIntervalSeconds = intent.getIntExtra(EXTRA_INTERVAL_SECONDS, 10);
-                    Log.d("WA_DEBUG", "newInterval: " + newIntervalSeconds);
+                    String newIntervalString = intent.getStringExtra(EXTRA_INTERVAL_STRING);
+                    Log.d("WA_DEBUG", "newInterval: " + newIntervalString);
+                    processSettings(newIntervalString);
 
                     if (notificationEnabled == true) {
-                        updateNotificationInterval(newIntervalSeconds);
+                        updateNotificationInterval();
                         Log.d("WA_DEBUG", "notificationEnabled true");
                     } else {
                         handler.removeCallbacks(notificationTask);
@@ -96,7 +110,13 @@ public class NotificationService extends Service {
             showNotification();
 
             // Schedule the next notification after the default interval (10 seconds)
-            handler.postDelayed(this, TimeUnit.SECONDS.toMillis(intervalSeconds));
+            if (notificationEnabled == true) {
+                handler.postDelayed(notificationTask, TimeUnit.SECONDS.toMillis(intervalSeconds));
+                Log.d("WA_DEBUG", "notificationEnabled true");
+            } else {
+                handler.removeCallbacks(notificationTask);
+                Log.d("WA_DEBUG", "notificationEnabled false  ");
+            }
         }
     };
 
@@ -137,12 +157,59 @@ public class NotificationService extends Service {
         }
     }
 
-    private void updateNotificationInterval(int newIntervalSeconds) {
-        intervalSeconds = newIntervalSeconds;
-        Log.d("WA_DEBUG", "updateNotificationInterval newIntervalSeconds: " + intervalSeconds);
+    private void updateNotificationInterval() {
+        Log.d("WA_DEBUG", "updateNotificationInterval newIntervalString: " + intervalSeconds);
         // Remove the existing callback
         handler.removeCallbacks(notificationTask);
         // Schedule the next notification with the updated interval
         handler.postDelayed(notificationTask, TimeUnit.SECONDS.toMillis(intervalSeconds));
+    }
+
+    protected void loadSettings () {
+
+        ContentResolver resolver = getContentResolver();
+
+        String notificationIntervalKey = "notificationInterval";
+
+        String notificationIntervalString = readSetting(resolver, notificationIntervalKey);
+        Log.d("WA_DEBUG", "Notification Interval: " + notificationIntervalString);
+        processSettings(notificationIntervalString);
+        Toast.makeText(this, "Interval loaded: " + intervalSeconds, Toast.LENGTH_SHORT).show();
+
+    }
+
+    private String readSetting(ContentResolver resolver, String key) {
+        Uri uri = Uri.withAppendedPath(SettingsProvider.CONTENT_URI, key);
+        String[] projection = {SettingsDbHelper.COLUMN_VALUE};
+
+        Cursor cursor = resolver.query(uri, projection, null, null, null);
+
+        String value = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            value = cursor.getString(cursor.getColumnIndex(SettingsDbHelper.COLUMN_VALUE));
+            cursor.close();
+        }
+
+        return value;
+    }
+
+    private void processSettings(String intervalString) {
+        // Comparing the variable with each string
+        notificationEnabled = true;
+        intervalSeconds = 10;
+        if (intervalString.equals(getString(R.string.label_disabled))) {
+            notificationEnabled = false;
+        } else
+        if (intervalString.equals(getString(R.string.label_one_hour))) {
+            intervalSeconds = 10;//1;
+        } else if (intervalString.equals(getString(R.string.label_three_hours))) {
+            intervalSeconds = 30;//3;
+        } else if (intervalString.equals(getString(R.string.label_twelve_hours))) {
+            intervalSeconds = 120;//12;
+        } else if (intervalString.equals(getString(R.string.label_one_day))) {
+            intervalSeconds = 24;
+        } else {
+            Toast.makeText(this, "Invalid interval", Toast.LENGTH_SHORT).show();
+        }
     }
 }

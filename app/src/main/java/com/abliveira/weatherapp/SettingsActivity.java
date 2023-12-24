@@ -24,8 +24,6 @@ public class SettingsActivity extends AppCompatActivity {
     private String unitSystem;
     private String language;
     private String notificationInterval;
-//    private boolean notificationEnabled;
-//    private int notificationIntervalHours;
 
     private RadioGroup unitSystemRadioGroup;
     private RadioGroup languageRadioGroup;
@@ -221,27 +219,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void sendUpdateIntervalBroadcast(String notificationInterval) {
 
-        int newInterval = 1;
-        boolean notificationEnabled = true;
-
-        // Comparing the variable with each string
-        if (notificationInterval.equals(getString(R.string.label_disabled))) {
-            notificationEnabled = false;
-        } else if (notificationInterval.equals(getString(R.string.label_one_hour))) {
-            newInterval = 10;//1;
-        } else if (notificationInterval.equals(getString(R.string.label_three_hours))) {
-            newInterval = 30;//3;
-        } else if (notificationInterval.equals(getString(R.string.label_twelve_hours))) {
-            newInterval = 120;//12;
-        } else if (notificationInterval.equals(getString(R.string.label_one_day))) {
-            newInterval = 24;
-        } else {
-            Toast.makeText(this, "Invalid interval", Toast.LENGTH_SHORT).show();
-        }
-        Log.d("WA_DEBUG", "sendUpdateIntervalBroadcast: " + newInterval);
+        Log.d("WA_DEBUG", "sendUpdateIntervalBroadcast: " + notificationInterval);
         Intent updateIntent = new Intent(NotificationService.ACTION_UPDATE_INTERVAL);
-        updateIntent.putExtra(NotificationService.EXTRA_NOTIFICATION_ENABLED, notificationEnabled);
-        updateIntent.putExtra(NotificationService.EXTRA_INTERVAL_SECONDS, newInterval);
+        updateIntent.putExtra(NotificationService.EXTRA_INTERVAL_STRING, notificationInterval);
         sendBroadcast(updateIntent);
         Toast.makeText(this, "Interval updated", Toast.LENGTH_SHORT).show();
     }
