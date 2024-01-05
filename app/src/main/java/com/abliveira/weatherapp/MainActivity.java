@@ -12,11 +12,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.abliveira.weatherapp.data.WeatherDataFetchTask;
 import com.abliveira.weatherapp.service.NotificationService;
+import com.abliveira.weatherapp.data.WeatherData;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -111,6 +115,30 @@ public class MainActivity extends AppCompatActivity {
             insertValues.put(SettingsDbHelper.COLUMN_VALUE, value);
             resolver.insert(SettingsProvider.CONTENT_URI, insertValues);
         }
+    }
+
+    public void getWeatherFromAPI(View view) {
+        WeatherDataFetchTask task = new WeatherDataFetchTask();
+        task.setCallback(new WeatherDataFetchTask.Callback() {
+            @Override
+            public void onDownloadComplete() {
+                updateWeatherUI();
+            }
+        });
+        task.execute(getString(R.string.api_url) + getString(R.string.api_key) + "&q=" + locationEditText.getText().toString() + "&units=metric&lang=en");
+    }
+
+    private void updateWeatherUI() {
+        WeatherData weatherData = WeatherData.getInstance();
+
+        cityNameTextView.setText(weatherData.getCity());
+        weatherDescriptionTextView.setText(weatherData.getWeatherDescription());
+        currTempTextView.setText(weatherData.getCurrTemp());
+        maxTempTextview.setText(weatherData.getMaxTemp());
+        minTempTextView.setText(weatherData.getMinTemp());
+        windSpeedTextView.setText(String.valueOf(weatherData.getWindSpeed()));
+        humidityTextView.setText(weatherData.getHumidity());
+        widgetsContainer.setVisibility(View.VISIBLE);
     }
 
     @Override

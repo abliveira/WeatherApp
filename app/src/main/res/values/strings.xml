@@ -18,5 +18,6 @@
     <string name="label_three_hours">Every 3 hours</string>
     <string name="label_twelve_hours">Every 12 hours</string>
     <string name="label_one_day">Once a day</string>
-
+    <string name="api_url" translatable="false">https://api.openweathermap.org/data/2.5/weather?appid=</string>
+    <string name="api_key" translatable="false">ec95a70b3bd197189c62f748e2851b30</string>
 </resources>
