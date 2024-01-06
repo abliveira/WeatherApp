@@ -22,7 +22,7 @@
             android:screenOrientation="portrait">
         </activity>
         <provider
-            android:name=".SettingsProvider"
+            android:name=".provider.SettingsProvider"
             android:authorities="com.abliveira.weatherapp.settingsprovider"
             android:exported="false" />
         <service android:name=".service.NotificationService" />

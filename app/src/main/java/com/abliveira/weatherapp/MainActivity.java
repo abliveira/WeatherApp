@@ -18,7 +18,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.abliveira.weatherapp.data.SettingsDbHelper;
 import com.abliveira.weatherapp.data.WeatherDataFetchTask;
+import com.abliveira.weatherapp.provider.SettingsProvider;
 import com.abliveira.weatherapp.service.NotificationService;
 import com.abliveira.weatherapp.data.WeatherData;
 
@@ -67,9 +69,9 @@ public class MainActivity extends AppCompatActivity {
         String notificationIntervalValue = getString(R.string.label_disabled);
 
         // Check and insert settings
-        saveSettingIfEmpty(resolver, "unitsystem", unitSystemValue, projection);
-        saveSettingIfEmpty(resolver, "language", languageValue, projection);
-        saveSettingIfEmpty(resolver, "notificationInterval", notificationIntervalValue, projection);
+        saveSettingIfEmpty(resolver, SettingsProvider.UNIT_SYSTEM_KEY, unitSystemValue, projection);
+        saveSettingIfEmpty(resolver, SettingsProvider.LANGUAGE_KEY, languageValue, projection);
+        saveSettingIfEmpty(resolver, SettingsProvider.NOTIFICATION_INTERVAL_KEY, notificationIntervalValue, projection);
 
         // Query and display all settings
         Cursor cursor = resolver.query(
