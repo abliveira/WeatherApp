@@ -93,6 +93,8 @@ public class SettingsActivity extends AppCompatActivity {
 
                 // Update the app configurations.
                 sendUpdateIntervalBroadcast(notificationInterval);
+//                TODO sendUpdateLanguage();
+//                TODO sendUpdateUnitSystem();
 
                 // Close the activity and return to the main.
                 finish();

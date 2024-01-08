@@ -13,22 +13,21 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.abliveira.weatherapp.data.SettingsDbHelper;
 import com.abliveira.weatherapp.data.WeatherDataFetchTask;
+import com.abliveira.weatherapp.data.SettingsDbHelper;
 import com.abliveira.weatherapp.provider.SettingsProvider;
 import com.abliveira.weatherapp.service.NotificationService;
 import com.abliveira.weatherapp.data.WeatherData;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Declare the UI variables that will be used to display the weather information
     TextView cityNameTextView, weatherDescriptionTextView, currTempTextView, minTempTextView, maxTempTextview, windSpeedTextView, humidityTextView;
     EditText locationEditText;
-    Button searchButton;
     LinearLayout widgetsContainer;
 
     @Override
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Get the references to the views in the layout.
         cityNameTextView = (TextView) findViewById(R.id.cityNameTextView);
         weatherDescriptionTextView = (TextView) findViewById(R.id.weatherDescriptionTextView);
         currTempTextView = (TextView) findViewById(R.id.currTempTextView);
@@ -45,35 +45,35 @@ public class MainActivity extends AppCompatActivity {
         windSpeedTextView = (TextView) findViewById(R.id.windSpeedTextView);
         humidityTextView = (TextView) findViewById(R.id.humidityTextView);
         locationEditText = (EditText) findViewById(R.id.locationEditText);
-        searchButton = (Button) findViewById(R.id.searchButton);
         widgetsContainer = findViewById(R.id.widgetsContainer);
 
         initializeSettings();
 
-        // Start the NotificationService
         startService(new Intent(this, NotificationService.class));
     }
 
-    private void initializeSettings(){
+    private void initializeSettings() {
+        // Get the ContentResolver object.
         ContentResolver resolver = getContentResolver();
 
+        // Define the columns to be retrieved from the database.
         String[] projection = {
                 SettingsDbHelper.COLUMN_ID,
                 SettingsDbHelper.COLUMN_KEY,
                 SettingsDbHelper.COLUMN_VALUE
         };
 
-        // Initialize with default values
+        // Initialize the settings with default values.
         String unitSystemValue = getString(R.string.label_metric);
         String languageValue = getString(R.string.label_english);
         String notificationIntervalValue = getString(R.string.label_disabled);
 
-        // Check and insert settings
+        // Check if the settings are empty and insert them if they are.
         saveSettingIfEmpty(resolver, SettingsProvider.UNIT_SYSTEM_KEY, unitSystemValue, projection);
         saveSettingIfEmpty(resolver, SettingsProvider.LANGUAGE_KEY, languageValue, projection);
         saveSettingIfEmpty(resolver, SettingsProvider.NOTIFICATION_INTERVAL_KEY, notificationIntervalValue, projection);
 
-        // Query and display all settings
+        // Query the database and display all settings.
         Cursor cursor = resolver.query(
                 SettingsProvider.CONTENT_URI,
                 projection,
@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         );
 
         if (cursor != null && cursor.moveToFirst()) {
+            // Iterate over the cursor and display each setting.
             do {
                 long id = cursor.getLong(cursor.getColumnIndex(SettingsDbHelper.COLUMN_ID));
                 String key = cursor.getString(cursor.getColumnIndex(SettingsDbHelper.COLUMN_KEY));
@@ -127,12 +128,15 @@ public class MainActivity extends AppCompatActivity {
                 updateWeatherUI();
             }
         });
+        // Execute the task with the API URL, API key, and location.
         task.execute(getString(R.string.api_url) + getString(R.string.api_key) + "&q=" + locationEditText.getText().toString() + "&units=metric&lang=en");
     }
 
     private void updateWeatherUI() {
+        // Get the weather data from the WeatherData singleton.
         WeatherData weatherData = WeatherData.getInstance();
 
+        // Configure the UI elements according to the weather data.
         cityNameTextView.setText(weatherData.getCity());
         weatherDescriptionTextView.setText(weatherData.getWeatherDescription());
         currTempTextView.setText(weatherData.getCurrTemp());
@@ -145,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the settings menu.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main_menu, menu);
         return true;
@@ -152,7 +157,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        // Handle menu item selections.
+        switch (item.getItemId()) {
             case R.id.settings_menu:
                 startSettingsActivity();
                 return true;
@@ -161,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void startSettingsActivity(){
+    private void startSettingsActivity() {
+        // Create an intent and start the settings activity.
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
