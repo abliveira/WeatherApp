@@ -5,12 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -177,14 +174,8 @@ public class NotificationService extends Service {
 
     protected void loadSettings() {
 
-        // Get the ContentResolver object.
-        ContentResolver resolver = getContentResolver();
-
-        // The key for the notification interval setting.
-        String notificationIntervalKey = "notificationInterval";
-
         // Read the notification interval setting from the database.
-        String notificationIntervalString = readSetting(resolver, notificationIntervalKey);
+        String notificationIntervalString = SettingsProvider.readSetting(getContentResolver(), SettingsProvider.NOTIFICATION_INTERVAL_KEY);
         Log.d("WA_DEBUG", "Notification Interval: " + notificationIntervalString);
 
         // Process the notification interval setting.
@@ -193,27 +184,6 @@ public class NotificationService extends Service {
         // Show a toast message to the user.
         Toast.makeText(this, "Interval loaded: " + timeInterval, Toast.LENGTH_SHORT).show();
 
-    }
-
-    private String readSetting(ContentResolver resolver, String key) {
-        // Create a URI for the setting.
-        Uri uri = Uri.withAppendedPath(SettingsProvider.CONTENT_URI, key);
-
-        // The projection for the query.
-        String[] projection = {SettingsDbHelper.COLUMN_VALUE};
-
-        // Perform the query.
-        Cursor cursor = resolver.query(uri, projection, null, null, null);
-
-        // Get the value of the setting.
-        String value = null;
-        if (cursor != null && cursor.moveToFirst()) {
-            value = cursor.getString(cursor.getColumnIndex(SettingsDbHelper.COLUMN_VALUE));
-            cursor.close();
-        }
-
-        // Return the value of the setting.
-        return value;
     }
 
     private void processSettings(String intervalString) {

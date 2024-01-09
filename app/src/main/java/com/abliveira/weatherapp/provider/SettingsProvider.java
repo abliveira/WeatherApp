@@ -1,6 +1,7 @@
 package com.abliveira.weatherapp.provider;
 
 import android.content.ContentProvider;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -189,5 +190,26 @@ public class SettingsProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+    }
+
+    public static String readSetting(ContentResolver resolver, String key) {
+        // Create a URI for the setting.
+        Uri uri = Uri.withAppendedPath(SettingsProvider.CONTENT_URI, key);
+
+        // The projection for the query.
+        String[] projection = {SettingsDbHelper.COLUMN_VALUE};
+
+        // Perform the query.
+        Cursor cursor = resolver.query(uri, projection, null, null, null);
+
+        // Get the value of the setting.
+        String value = null;
+        if (cursor != null && cursor.moveToFirst()) {
+            value = cursor.getString(cursor.getColumnIndex(SettingsDbHelper.COLUMN_VALUE));
+            cursor.close();
+        }
+
+        // Return the value of the setting.
+        return value;
     }
 }

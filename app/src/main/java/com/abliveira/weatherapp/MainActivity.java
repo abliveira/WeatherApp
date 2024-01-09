@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     EditText locationEditText;
     LinearLayout widgetsContainer;
 
+    // Get the weather data from the WeatherData singleton.
+    WeatherData weatherData = WeatherData.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -63,15 +66,10 @@ public class MainActivity extends AppCompatActivity {
                 SettingsDbHelper.COLUMN_VALUE
         };
 
-        // Initialize the settings with default values.
-        String unitSystemValue = getString(R.string.label_metric);
-        String languageValue = getString(R.string.label_english);
-        String notificationIntervalValue = getString(R.string.label_disabled);
-
-        // Check if the settings are empty and insert them if they are.
-        saveSettingIfEmpty(resolver, SettingsProvider.UNIT_SYSTEM_KEY, unitSystemValue, projection);
-        saveSettingIfEmpty(resolver, SettingsProvider.LANGUAGE_KEY, languageValue, projection);
-        saveSettingIfEmpty(resolver, SettingsProvider.NOTIFICATION_INTERVAL_KEY, notificationIntervalValue, projection);
+        // Check if the settings are empty and insert them with default values if they are.
+        saveSettingIfEmpty(resolver, SettingsProvider.UNIT_SYSTEM_KEY, getString(R.string.label_metric), projection);
+        saveSettingIfEmpty(resolver, SettingsProvider.LANGUAGE_KEY, getString(R.string.label_english), projection);
+        saveSettingIfEmpty(resolver, SettingsProvider.NOTIFICATION_INTERVAL_KEY, getString(R.string.label_disabled), projection);
 
         // Query the database and display all settings.
         Cursor cursor = resolver.query(
@@ -129,13 +127,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // Execute the task with the API URL, API key, and location.
-        task.execute(getString(R.string.api_url) + getString(R.string.api_key) + "&q=" + locationEditText.getText().toString() + "&units=metric&lang=en");
+        String url = getString(R.string.api_url) + getString(R.string.api_key) + "&q=" + locationEditText.getText().toString() + getConfigurationString();
+        Log.d("WA_DEBUG", "URL: " + url);
+        task.execute(url);
     }
 
     private void updateWeatherUI() {
-        // Get the weather data from the WeatherData singleton.
-        WeatherData weatherData = WeatherData.getInstance();
-
         // Configure the UI elements according to the weather data.
         cityNameTextView.setText(weatherData.getCity());
         weatherDescriptionTextView.setText(weatherData.getWeatherDescription());
@@ -145,6 +142,41 @@ public class MainActivity extends AppCompatActivity {
         windSpeedTextView.setText(String.valueOf(weatherData.getWindSpeed()));
         humidityTextView.setText(weatherData.getHumidity());
         widgetsContainer.setVisibility(View.VISIBLE);
+    }
+
+    private String getConfigurationString() {
+
+        // Get the unit system setting from the SettingsProvider.
+        String unitSystemString = SettingsProvider.readSetting(getContentResolver(), SettingsProvider.UNIT_SYSTEM_KEY);
+        Log.d("WA_DEBUG", "Unit System: " + unitSystemString);
+
+        // Get the language setting from the SettingsProvider.
+        String languageString = SettingsProvider.readSetting(getContentResolver(), SettingsProvider.LANGUAGE_KEY);
+        Log.d("WA_DEBUG", "Language: " + languageString);
+
+        // Set the unit system on the weather data object.
+        weatherData.setUnitSystem(unitSystemString);
+
+        // Convert the unit system string to the format required by the API.
+        if (unitSystemString.equals(getString(R.string.label_metric))) {
+            unitSystemString = "&units=metric";
+        } else if (unitSystemString.equals(getString(R.string.label_imperial))) {
+            unitSystemString = "&units=imperial";
+        }
+
+        // Convert the language string to the format required by the API.
+        if (languageString.equals(getString(R.string.label_english))) {
+            languageString = "&lang=en";
+        } else if (languageString.equals(getString(R.string.label_portuguese))) {
+            languageString = "&lang=pt";
+        } else if (languageString.equals(getString(R.string.label_spanish))) {
+            languageString = "&lang=es";
+        }
+
+        Log.d("WA_DEBUG", "Unit System: " + unitSystemString + ", Language: " + languageString);
+
+        // Return the combined unit system and language string.
+        return (unitSystemString + languageString);
     }
 
     @Override

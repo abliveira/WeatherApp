@@ -1,5 +1,9 @@
 package com.abliveira.weatherapp.data;
 
+import android.util.Log;
+
+import com.abliveira.weatherapp.R;
+
 import org.json.JSONObject;
 
 public class WeatherData {
@@ -12,6 +16,7 @@ public class WeatherData {
     private String windSpeed;
     private String weatherDescription;
     private String city;
+    private String unitSystem;
 
     // Singleton holder.
     private static class SingletonHolder {
@@ -53,6 +58,8 @@ public class WeatherData {
         this.city = city;
     }
 
+    public void setUnitSystem(String unitSystem) { this.unitSystem = unitSystem; }
+
     // Getters.
 
     public String getCurrTemp() {
@@ -83,6 +90,8 @@ public class WeatherData {
         return city;
     }
 
+    public String getUnitSystem() { return unitSystem; }
+
     // Parse the weather data.
     public boolean parseWeather(String s) {
 
@@ -96,12 +105,25 @@ public class WeatherData {
             JSONObject main = jsonObject.getJSONObject("main");
             JSONObject wind = jsonObject.getJSONObject("wind");
 
+            // Prepare the unit strings.
+            String tempUnitString = null;
+            String windSpeedUnitString = null;
+            Log.d("WA_Debug", "getUnitSystem" + unitSystem);
+
+            if (unitSystem.equals("Metric")) {
+                tempUnitString = " °C";
+                windSpeedUnitString = " m/s";
+            } else if (unitSystem.equals("Imperial")) {
+                tempUnitString = " °F";
+                windSpeedUnitString = " mph";
+            }
+
             // Set the weather data.
-            currTemp = main.getString("temp") + " °C";
-            minTemp = main.getString("temp_min") + " °C";
-            maxTemp = main.getString("temp_max") + " °C";
+            currTemp = main.getString("temp") + tempUnitString;
+            minTemp = main.getString("temp_min") + tempUnitString;
+            maxTemp = main.getString("temp_max") + tempUnitString;
             humidity = main.getString("humidity") + " %";
-            windSpeed = wind.getString("speed") + " m/s";
+            windSpeed = wind.getString("speed") + windSpeedUnitString;
             weatherDescription = weather.getString("description");
             city = jsonObject.getString("name");
             return true;
