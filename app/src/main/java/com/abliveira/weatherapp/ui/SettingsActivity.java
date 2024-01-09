@@ -1,4 +1,4 @@
-package com.abliveira.weatherapp;
+package com.abliveira.weatherapp.ui;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -17,8 +17,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.abliveira.weatherapp.R;
 import com.abliveira.weatherapp.data.SettingsDbHelper;
-import com.abliveira.weatherapp.provider.SettingsProvider;
+import com.abliveira.weatherapp.data.SettingsProvider;
 import com.abliveira.weatherapp.service.NotificationService;
 
 public class SettingsActivity extends AppCompatActivity {

@@ -17,10 +17,9 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
-import com.abliveira.weatherapp.MainActivity;
+import com.abliveira.weatherapp.ui.MainActivity;
 import com.abliveira.weatherapp.R;
-import com.abliveira.weatherapp.data.SettingsDbHelper;
-import com.abliveira.weatherapp.provider.SettingsProvider;
+import com.abliveira.weatherapp.data.SettingsProvider;
 
 import java.util.concurrent.TimeUnit;
 

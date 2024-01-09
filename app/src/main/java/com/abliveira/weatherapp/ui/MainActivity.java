@@ -1,4 +1,4 @@
-package com.abliveira.weatherapp;
+package com.abliveira.weatherapp.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,9 +17,10 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.abliveira.weatherapp.R;
 import com.abliveira.weatherapp.data.WeatherDataFetchTask;
 import com.abliveira.weatherapp.data.SettingsDbHelper;
-import com.abliveira.weatherapp.provider.SettingsProvider;
+import com.abliveira.weatherapp.data.SettingsProvider;
 import com.abliveira.weatherapp.service.NotificationService;
 import com.abliveira.weatherapp.data.WeatherData;
 

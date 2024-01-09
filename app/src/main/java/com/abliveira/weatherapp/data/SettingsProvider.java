@@ -1,4 +1,4 @@
-package com.abliveira.weatherapp.provider;
+package com.abliveira.weatherapp.data;
 
 import android.content.ContentProvider;
 import android.content.ContentResolver;
@@ -13,8 +13,6 @@ import android.net.Uri;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import com.abliveira.weatherapp.data.SettingsDbHelper;
 
 public class SettingsProvider extends ContentProvider {
 
