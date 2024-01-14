@@ -9,14 +9,14 @@ import org.json.JSONObject;
 public class WeatherData {
 
     // Declare the variables.
-    private String currTemp;
-    private String maxTemp;
-    private String minTemp;
-    private String humidity;
-    private String windSpeed;
-    private String weatherDescription;
-    private String city;
-    private String unitSystem;
+    private String currTemp = "";
+    private String maxTemp = "";
+    private String minTemp = "";
+    private String humidity = "";
+    private String windSpeed = "";
+    private String weatherDescription = "";
+    private String city = "";
+    private String unitSystem = "";
 
     // Singleton holder.
     private static class SingletonHolder {
@@ -106,8 +106,8 @@ public class WeatherData {
             JSONObject wind = jsonObject.getJSONObject("wind");
 
             // Prepare the unit strings.
-            String tempUnitString = null;
-            String windSpeedUnitString = null;
+            String tempUnitString = "";
+            String windSpeedUnitString = "";
             Log.d("WA_Debug", "getUnitSystem" + unitSystem);
 
             if (unitSystem.equals("Metric")) {
