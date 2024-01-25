@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getWeatherFromAPI(View view) {
+        hideKeyboard();
         WeatherDataFetchTask task = new WeatherDataFetchTask();
         task.setCallback(new WeatherDataFetchTask.Callback() {
             @Override
@@ -178,6 +181,14 @@ public class MainActivity extends AppCompatActivity {
 
         // Return the combined unit system and language string.
         return (unitSystemString + languageString);
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 
     @Override
