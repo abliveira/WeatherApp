@@ -14,7 +14,7 @@ It's important to note that this app is a learning exercise for different Androi
 
 To run the Weather App locally, follow these steps:
 1. Clone the repository.
-2. Add your OpenWeather API key to the app.
+2. Add your OpenWeather API key to the app. In the `local.properties` file, add the line `api.key=<your_key_here>`.
 3. Build and run the app on your Android device.
 
 ## Credits

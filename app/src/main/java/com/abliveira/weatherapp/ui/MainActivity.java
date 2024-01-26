@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.abliveira.weatherapp.BuildConfig;
 import com.abliveira.weatherapp.R;
 import com.abliveira.weatherapp.data.WeatherDataFetchTask;
 import com.abliveira.weatherapp.data.SettingsDbHelper;
@@ -131,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         // Execute the task with the API URL, API key, and location.
-        String url = getString(R.string.api_url) + getString(R.string.api_key) + "&q=" + locationEditText.getText().toString() + getConfigurationString();
+        String url = getString(R.string.api_url) + BuildConfig.API_KEY + "&q=" + locationEditText.getText().toString() + getConfigurationString();
         Log.d("WA_DEBUG", "URL: " + url);
         task.execute(url);
     }
