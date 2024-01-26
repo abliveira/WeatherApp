@@ -2,6 +2,7 @@
     <string name="app_name">Weather App</string>
     <string name="text_input_hint_location">Location</string>
     <string name="input_location">Type a location</string>
+    <string name="fetch_fail_message">Oops! Failed to retrieve weather data</string>
     <string name="widget_maxtemp">Maximum Temperature</string>
     <string name="widget_mintemp">Minimum Temperature</string>
     <string name="widget_windspeed">Wind Speed</string>

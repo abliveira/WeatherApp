@@ -1,6 +1,7 @@
 package com.abliveira.weatherapp.data;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,7 +17,7 @@ public class WeatherDataFetchTask extends AsyncTask<String, Void, String> {
 
     // Callback interface
     public interface Callback {
-        void onDownloadComplete();
+        void onTaskComplete(boolean isSuccessful);
     }
 
     // Setter for the callback
@@ -104,6 +105,13 @@ public class WeatherDataFetchTask extends AsyncTask<String, Void, String> {
 
         super.onPostExecute(s);
 
+        if (s == null){
+            Log.d("WA_DEBUG", "Data fetch fail");
+            // Show a toast message to the user.
+            callback.onTaskComplete(false);
+            return;
+        }
+
         // Get the WeatherData instance
         WeatherData weatherData = WeatherData.getInstance();
 
@@ -112,7 +120,7 @@ public class WeatherDataFetchTask extends AsyncTask<String, Void, String> {
 
         // Notify the callback that the download is complete
         if (ret & callback != null) {
-            callback.onDownloadComplete();
+            callback.onTaskComplete(true);
         }
     }
 }

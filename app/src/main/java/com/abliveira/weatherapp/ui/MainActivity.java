@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.abliveira.weatherapp.BuildConfig;
 import com.abliveira.weatherapp.R;
@@ -127,8 +128,12 @@ public class MainActivity extends AppCompatActivity {
         WeatherDataFetchTask task = new WeatherDataFetchTask();
         task.setCallback(new WeatherDataFetchTask.Callback() {
             @Override
-            public void onDownloadComplete() {
-                updateWeatherUI();
+            public void onTaskComplete(boolean isSuccessful) {
+                if (!isSuccessful) {
+                    Toast.makeText(MainActivity.this, getString(R.string.fetch_fail_message), Toast.LENGTH_SHORT).show();
+                } else {
+                    updateWeatherUI();
+                }
             }
         });
         // Execute the task with the API URL, API key, and location.
